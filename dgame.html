@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dino Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    .game {
+      width: 100%;
+      height: 300px;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background-image: url('804d53d4-39a1-48c3-815f-e255b9e8c94d.png'); /* replace with actual image path if needed */
+      background-size: cover;
+      background-position: center;
+    }
+
+    #dino {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+      border-radius: 5px;
+    }
+
+    #cactus {
+      width: 25px;
+      height: 50px;
+      background-color: green;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    p {
+      color: white;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+  </div>
+  <p>Score: <span id="score">0</span></p>
+
+  <script>
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const scoreEl = document.getElementById("score");
+
+    let isJumping = false;
+    let score = 0;
+
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "Space" && !isJumping) {
+        jump();
+      }
+    });
+
+    function jump() {
+      isJumping = true;
+      let position = 0;
+      let up = setInterval(() => {
+        if (position >= 100) {
+          clearInterval(up);
+          let down = setInterval(() => {
+            if (position <= 0) {
+              clearInterval(down);
+              isJumping = false;
+            } else {
+              position -= 5;
+              dino.style.bottom = position + "px";
+            }
+          }, 20);
+        } else {
+          position += 5;
+          dino.style.bottom = position + "px";
+        }
+      }, 20);
+    }
+
+    function moveCactus() {
+      let cactusPosition = 600;
+      let cactusInterval = setInterval(() => {
+        if (cactusPosition < -25) {
+          cactusPosition = 600;
+          score++;
+          scoreEl.innerText = score;
+        } else {
+          cactusPosition -= 5;
+          cactus.style.left = cactusPosition + "px";
+        }
+
+        let dinoBottom = parseInt(window.getComputedStyle(dino).bottom);
+        if (
+          cactusPosition > 50 &&
+          cactusPosition < 90 &&
+          dinoBottom < 40
+        ) {
+          alert("Game Over! Your score: " + score);
+          clearInterval(cactusInterval);
+          location.reload();
+        }
+      }, 20);
+    }
+
+    moveCactus();
+  </script>
+</body>
+</html>
